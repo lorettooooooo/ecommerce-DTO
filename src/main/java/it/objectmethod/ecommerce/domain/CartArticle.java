@@ -16,7 +16,7 @@ public class CartArticle {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_carrello_dettaglio")
-	private Integer id;
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "id_carrello")
@@ -29,11 +29,11 @@ public class CartArticle {
 	@JoinColumn(name = "id_articolo")
 	private Article article;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 

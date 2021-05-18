@@ -8,7 +8,12 @@ import org.springframework.stereotype.Component;
 import it.objectmethod.ecommerce.domain.CartArticle;
 
 @Component
-public interface CartArticleRepository extends JpaRepository<CartArticle, Integer> {
+public interface CartArticleRepository extends JpaRepository<CartArticle, Long> {
 
 	public Optional<CartArticle> findByCartIdAndArticleId(Integer cartId, Integer articleId);
+
+//	@Override
+//	@Modifying(clearAutomatically = true)
+//	@Transactional
+//	public void deleteById(Integer Id);
 }

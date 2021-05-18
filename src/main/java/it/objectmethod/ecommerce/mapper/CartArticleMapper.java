@@ -16,7 +16,7 @@ public interface CartArticleMapper extends EntityMapper<CartArticleDTO, CartArti
 	CartArticleDTO toDto(CartArticle entity);
 
 	@Override
-	@Mapping(target = "articleId", ignore = true)
-	@Mapping(target = "cartId", ignore = true)
+	@Mapping(target = "article", ignore = true)
+	@Mapping(target = "cart", ignore = true)
 	CartArticle toEntity(CartArticleDTO dto);
 }

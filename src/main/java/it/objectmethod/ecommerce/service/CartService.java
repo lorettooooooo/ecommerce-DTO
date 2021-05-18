@@ -37,6 +37,9 @@ public class CartService {
 	CartArticleMapper cartArticleMapper;
 
 	public CartDTO showUserCart(Integer userId, HttpServletResponse response) {
+		if (userId == null) {
+			badRequest(response);
+		}
 		CartDTO cartDto = null;
 		Optional<Cart> userCartOpt = cartRepo.findByUserId(userId);
 		if (userCartOpt.isEmpty()) {
@@ -54,7 +57,7 @@ public class CartService {
 			badRequest(response);
 		} else {
 			Optional<CartArticle> userCart = cartArticleRepo.findByCartIdAndArticleId(cartId, articleId);
-			if (userCart.isPresent()) { // creo carrello
+			if (userCart.isEmpty()) { // creo carrello
 				CartArticle cartArticle = new CartArticle();
 				Cart cart = cartRepo.findById(cartId).get();
 				cartArticle.setCart(cart);
@@ -75,6 +78,38 @@ public class CartService {
 		return cartArticleDTO;
 	}
 
+	public CartArticleDTO removeArticle(Integer cartId, Integer articleId, HttpServletResponse response) {
+		CartArticleDTO cartArticleDTO = null;
+		if (cartId == null || articleId == null) {
+			System.out.println("non specifico il carrello");
+			badRequest(response);
+		} else {
+			Optional<CartArticle> cartArticleOpt = cartArticleRepo.findByCartIdAndArticleId(cartId, articleId);
+			if (!cartArticleOpt.isPresent()) {
+				noContent(response);
+			} else {
+				System.out.println("il carrello esiste");
+				CartArticle cartArticle = cartArticleOpt.get();
+				Integer oldQuantity = cartArticle.getQuantity();
+				Integer newQuantity = null;
+				if (oldQuantity > 1) { // se è maggiore di 1 rimarrà almeno 1, quindi il carrello continua a esistere
+					newQuantity = oldQuantity - 1;
+					cartArticle.setQuantity(newQuantity);
+					cartArticleRepo.save(cartArticle);
+					cartArticleDTO = cartArticleMapper.toDto(cartArticle);
+				} else { // il carrello viene cancellato quando la quantità dovrebbe scendere sotto 1
+					System.out.println(
+							"il carrello esiste e va eliminato perché ho 1 oggetto, l'ID è " + cartArticle.getId());
+					cartArticleRepo.deleteById(cartArticle.getId());
+					cartArticleDTO = cartArticleMapper.toDto(cartArticle);
+				}
+			}
+		}
+
+		return cartArticleDTO;
+	}
+
+	// metodi privati
 	private void badRequest(HttpServletResponse response) {
 		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 	}

@@ -2,18 +2,18 @@ package it.objectmethod.ecommerce.service.dto;
 
 public class CartArticleDTO {
 
-	private Integer id;
+	private Long id;
 	private Integer quantity;
 	private String code;
 	private String name;
 	private Integer price;
 	private Integer articleId;
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
