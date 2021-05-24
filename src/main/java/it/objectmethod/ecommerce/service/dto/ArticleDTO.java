@@ -1,17 +1,17 @@
 package it.objectmethod.ecommerce.service.dto;
 
 public class ArticleDTO {
-	private Integer id;
+	private Long id;
 	private Integer availability;
 	private String code;
 	private String name;
 	private Integer price;
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 

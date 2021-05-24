@@ -2,7 +2,7 @@ package it.objectmethod.ecommerce.service;
 
 import java.util.Calendar;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -10,8 +10,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
 import it.objectmethod.ecommerce.domain.User;
+import it.objectmethod.ecommerce.service.dto.UserDTO;
 
-@Component
+@Service
 public class JWTService {
 
 	private static final String MY_SECRET_JWT_KEY = "Famme-vede-er-carrello";
@@ -20,7 +21,7 @@ public class JWTService {
 
 		Calendar cal = Calendar.getInstance();
 
-		int minute = cal.get(Calendar.MINUTE) + 5;
+		int minute = cal.get(Calendar.MINUTE) + 60;
 		if (minute > 60) {
 			minute = minute - 60;
 			cal.set(Calendar.HOUR, cal.get(Calendar.HOUR) + 1);
@@ -53,25 +54,25 @@ public class JWTService {
 		return valid;
 	}
 
-	public User getUserByToken(String jwtToken) {
-		User user = new User();
+	public UserDTO getUserByToken(String jwtToken) {
+		UserDTO userDTO = new UserDTO();
 		Algorithm alg = Algorithm.HMAC256(MY_SECRET_JWT_KEY);
 		try {
 			JWTVerifier ver = JWT.require(alg).build();
 			DecodedJWT decoded = ver.verify(jwtToken);
 
 			Long userId = decoded.getClaim("user_id").asLong();
-			String userName = decoded.getClaim("user_name").asString();
+			String username = decoded.getClaim("user_name").asString();
 
-			user.setId(userId);
-			user.setUsername(userName);
+			userDTO.setId(userId);
+			userDTO.setUsername(username);
 
-			System.out.println("Utente verificato! " + userId + " - " + userName);
+			System.out.println("Utente verificato! " + userId + " - " + username);
 
 		} catch (Exception e) {
 			e.printStackTrace();
-			user = null;
+			userDTO = null;
 		}
-		return user;
+		return userDTO;
 	}
 }

@@ -7,7 +7,7 @@ public class CartArticleDTO {
 	private String code;
 	private String name;
 	private Integer price;
-	private Integer articleId;
+	private Long articleId;
 
 	public void setId(Long id) {
 		this.id = id;
@@ -49,11 +49,11 @@ public class CartArticleDTO {
 		return price;
 	}
 
-	public Integer getArticleId() {
+	public Long getArticleId() {
 		return articleId;
 	}
 
-	public void setArticleId(Integer articleId) {
+	public void setArticleId(Long articleId) {
 		this.articleId = articleId;
 	}
 }

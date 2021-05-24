@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,34 +25,37 @@ public class Cart {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_carrello")
-	private Integer id;
+	private Long id;
 
-	@Column(name = "id_utente")
-	private Integer userId;
+	@JsonIgnore
+	@JoinColumn(name = "id_utente")
+	@ManyToOne
+	private User user;
 
 	@JsonIgnore
 	@ManyToMany
 	@JoinTable(name = "carrello_dettaglio", joinColumns = @JoinColumn(name = "id_carrello", referencedColumnName = "id_carrello"), inverseJoinColumns = @JoinColumn(name = "id_articolo", referencedColumnName = "id_articolo"))
 	private List<Article> articles;
 
+	@JsonIgnore
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	@JoinColumn(name = "id_carrello")
 	private List<CartArticle> cartArticles;
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(Integer userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public void setArticles(List<Article> articles) {

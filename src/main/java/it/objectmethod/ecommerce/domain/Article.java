@@ -22,7 +22,7 @@ public class Article {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id_articolo")
-	private Integer id;
+	private Long id;
 
 	@Column(name = "disponibilita")
 	private Integer availability;
@@ -46,11 +46,11 @@ public class Article {
 	@JoinColumn(name = "id_articolo")
 	private List<CartArticle> cartArticlesList;
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 

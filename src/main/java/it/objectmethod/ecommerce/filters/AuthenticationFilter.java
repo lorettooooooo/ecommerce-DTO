@@ -10,6 +10,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import it.objectmethod.ecommerce.service.JWTService;
 @Order(3)
 public class AuthenticationFilter implements Filter {
 
+	Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+
 	@Autowired
 	private JWTService jwtSrv;
 
@@ -27,29 +31,30 @@ public class AuthenticationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 
-		System.out.println("CIAO SONO IL FILTRO!");
+		logger.info("INIZIO FILTRO");
 		HttpServletRequest httpReq = (HttpServletRequest) request;
 		HttpServletResponse httpResp = (HttpServletResponse) response;
 		String url = httpReq.getRequestURI();
-		System.out.println(url);
+		logger.info("STO CONTROLLANDO " + url);
 
 		if (url.endsWith("login")) {
-			System.out.println("RICHIESTA APPROVATA!");
+			logger.info("RICHIESTA APPROVATA");
 			chain.doFilter(request, response);
 		} else {
 			String token = httpReq.getHeader("auth-token");
 			if (token != null) {
 				if (jwtSrv.checkJWTToken(token)) {
-					System.out.println("TOKEN VALIDO RICHIESTA APPROVATA!");
+					logger.info("TOKEN VALIDO RICHIESTA APPROVATA");
 					chain.doFilter(request, response);
 				} else {
-					System.out.println("TOKEN NON VALIDO RICHIESTA BLOCCATA!");
+					logger.warn("TOKEN NON VALIDO RICHIESTA BLOCCATA");
 					httpResp.setStatus(HttpServletResponse.SC_FORBIDDEN);
 				}
 			} else {
-				System.out.println("TOKEN NON PRESENTE RICHIESTA BLOCCATA!");
+				logger.error("TOKEN NON PRESENTE RICHIESTA BLOCCATA");
 				httpResp.setStatus(HttpServletResponse.SC_FORBIDDEN);
 			}
 		}
+		logger.info("FINE FILTRO");
 	}
 }
