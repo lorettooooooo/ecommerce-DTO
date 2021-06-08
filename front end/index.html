@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="styles/style.css">
+    <title>LOGIN</title>
+    <script src="pages/scripts/logScript.js"></script>
+</head>
+
+<body onload = "logincheck()">
+    <div class="header">
+        <h1 id="pageTitle">Benvenuto su FakeWebsite</h1>
+    </div>
+    <div id="loginForm">
+        <form action="post">
+            
+            <input type="text" placeholder="username" id="username" />
+            <br>
+            <input type="password" placeholder="password" id="password" />
+            <p id="loginError" class="error"></p>
+            <button type="button" onclick="login()"> login</button> <a href ="#" onclick = "showSubscribe()">non sei ancora iscritto?</a>
+        </form>
+        <a href="javascript:alert('sei un coglione')">hai dimenticato la password?</a>
+    </div>
+
+    <div id="subscrForm">
+        <form action="post">
+            
+            <input type="text" placeholder="username" id="subscrUsername"/>
+            <br>
+            <input type="password" placeholder="password" id="subscrPassword"/>
+            <p id="subscrError" class="error"></p>
+            <button type="button" onclick="subscribe()"> iscriviti</button> <a href ="#" onclick = "showLogin()">sei già iscritto?</a>
+        </form>
+    </div>
+    <footer>
+        lorenzo carchedi
+    </footer>
+</body>
+
+
+
+</html>

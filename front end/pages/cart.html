@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>
+        Il mio Carrello
+    </title>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/cartScript.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body onload="logincheck()">
+    <div class="header">
+        <h1 id="pageTitle"></h1>
+      </div>
+    <div class="navbar">
+        <a href="homePage.html">Home</a>
+        <a href="cart.html" class="active">il Mio Carrello</a>
+        <a href="orders.html">i Miei Ordini</a>
+        <a href="profile.html">il Mio Profilo</a>
+        <a onclick="logout()" class="right">Logout</a>
+      </div>
+    <div id = "cartDiv">
+        <table id="cartTable">
+            <thead>
+                <th>elimina</th>
+                <th>nome</th>
+                <th>codice</th>
+                <th>quantità</th>
+                <th>prezzo</th>
+                <th>gestisci articolo</th>
+            </thead>
+            <tbody id ="cartBody">
+
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

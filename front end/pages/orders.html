@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <title>
+        I miei Ordini
+    </title>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/ordersScript.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body onload="logincheck()">
+    <div class="header">
+        <h1 id="pageTitle"></h1>
+    </div>
+    <div class="navbar">
+        <a href="homePage.html">Home</a>
+        <a href="cart.html">il Mio Carrello</a>
+        <a href="orders.html" class="active">i Miei Ordini</a>
+        <a href="profile.html">il Mio Profilo</a>
+        <a onclick="logout()" class="right">Logout</a>
+    </div>
+    <div id = "orderDiv">
+        <table id='orderTable' style="display: block;">
+            <thead>
+                <tr>
+                    <th colspan="3"><br>
+                        <h3>I miei Ordini</h3>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Numero ordine</th>
+                    <th>Data ordine</th>
+                    <th>Mostra dettagli</th>
+                </tr>
+            </thead>
+        </table>
+
+
+        <table id='orderDetTable' style="display: none;">
+            <thead>
+            <tr>
+                <th colspan="2"><br>
+                    <h3>Dettagli dell'ordine </h3>
+                    <h3 id="orderName"></h3>
+                </th>
+            </tr>
+            <tr>
+                <th>Nome Articolo</th>
+                <th>Prezzo</th>
+                <th>Quantità</th>
+            </tr>
+        </thead>
+            <tbody id = "orDetTabBody"></tbody>
+        </table>
+    </div>
+</body>
+
+</html>

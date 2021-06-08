@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <title>
+        Il mio Profilo
+    </title>
+    <script src="scripts/script.js"></script>
+    <script src="scripts/profileScript.js"></script>
+    <link rel="stylesheet" href="../styles/style.css">
+</head>
+
+<body onload="logincheck()">
+    <div class="header">
+        <h1 id="pageTitle"> FakeWebsite</h1>
+    </div>
+    <div class="navbar">
+        <a href="homePage.html">Home</a>
+        <a href="cart.html">il Mio Carrello</a>
+        <a href="orders.html">i Miei Ordini</a>
+        <a href="profile.html" class="active">il Mio Profilo</a>
+        <a onclick="logout()" class="right">Logout</a>
+    </div>
+    <div id="profiledata">
+        <table>
+            <tr>
+                <td>
+                    nome utente :
+                </td>
+                <td id="username"></td>
+            </tr>
+            <tr>
+                <td>
+                    cambia password :
+                </td>
+                <td>
+                    <form action="post">
+                        <input type="password" placeholder="vecchia password" id="oldPwd" />
+                        <br>
+                        <input type="password" placeholder="nuova password" id="newPwd1" />
+                        <br>
+                        <input type="password" placeholder="conferma nuova password" id="newPwd2" />
+                        <p id="pwdError" class="error"></p>
+                        <button type="button" onclick="passwordChange()">cambia password</button>
+                        <br>
+                        <p id = "passwordError" class="error"></p>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td> cancella l'account
+                </td>
+                <td><button type="button" onclick="accountDelete()">cancella</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>
