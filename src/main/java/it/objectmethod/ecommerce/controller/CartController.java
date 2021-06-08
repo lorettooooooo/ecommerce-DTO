@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.objectmethod.ecommerce.service.CartArticleService;
 import it.objectmethod.ecommerce.service.CartService;
 import it.objectmethod.ecommerce.service.JWTService;
 import it.objectmethod.ecommerce.service.dto.CartArticleDTO;
@@ -28,26 +29,29 @@ public class CartController {
 	private CartService cartServ;
 
 	@Autowired
+	private CartArticleService cartArtServ;
+
+	@Autowired
 	private JWTService jwtServ;
 
 	@RequestMapping("/myCart")
-	public ResponseEntity<CartDTO> showUserCart(@RequestHeader("auth-token") String token) {
+	public ResponseEntity<CartDTO> getUserCart(@RequestHeader("auth-token") String token) {
 		ResponseEntity<CartDTO> ret = null;
 		CartDTO userCartDto = getCartFromToken(token);
 		if (userCartDto == null) {
 			ret = new ResponseEntity<CartDTO>(HttpStatus.NO_CONTENT);
 		} else {
-			ret = new ResponseEntity<CartDTO>(userCartDto, HttpStatus.FOUND);
+			ret = new ResponseEntity<CartDTO>(userCartDto, HttpStatus.OK);
 		}
 		return ret;
 	}
 
 	@RequestMapping("/addArticle")
-	public ResponseEntity<CartArticleDTO> addArticle(@RequestHeader("auth-token") String token,
+	public ResponseEntity<CartArticleDTO> addCartArticle(@RequestHeader("auth-token") String token,
 			@RequestParam("articleId") Long articleId) {
 		ResponseEntity<CartArticleDTO> ret = null;
 		Long cartId = getCartFromToken(token).getId();
-		if (cartId == null || articleId == null) {
+		if (articleId == null) {
 			logger.error("non specifico carrello o articolo");
 			ret = new ResponseEntity<CartArticleDTO>(HttpStatus.BAD_REQUEST);
 		}
@@ -55,12 +59,10 @@ public class CartController {
 		if (cartArticleDTO == null) {
 			ret = new ResponseEntity<CartArticleDTO>(HttpStatus.NO_CONTENT);
 		} else {
-			ret = new ResponseEntity<CartArticleDTO>(cartArticleDTO, HttpStatus.FOUND);
+			ret = new ResponseEntity<CartArticleDTO>(cartArticleDTO, HttpStatus.OK);
 		}
 		return ret;
 	}
-
-	// non cancellano da DB
 
 	@RequestMapping("/removeArticle")
 	public ResponseEntity<CartArticleDTO> removeArticle(@RequestHeader("auth-token") String token,
@@ -75,12 +77,12 @@ public class CartController {
 		if (userCart == null) {
 			ret = new ResponseEntity<CartArticleDTO>(HttpStatus.NO_CONTENT);
 		} else {
-			ret = new ResponseEntity<CartArticleDTO>(userCart, HttpStatus.FOUND);
+			ret = new ResponseEntity<CartArticleDTO>(userCart, HttpStatus.OK);
 		}
 		return ret;
 	}
 
-	@RequestMapping("/deleteArticleList")
+	@RequestMapping("/deleteCartArticle")
 	public void deleteArticleList(@RequestHeader("auth-token") String token, @RequestParam("articleId") Long articleId,
 			HttpServletResponse response) {
 		Long cartId = getCartFromToken(token).getId();
@@ -88,26 +90,26 @@ public class CartController {
 			logger.error("non specifico carrello o articolo");
 			badRequest(response);
 		} else {
-			cartServ.deleteArticleList(cartId, articleId);
+			cartServ.deleteCartArticleList(cartId, articleId);
 		}
 	}
 
-	@RequestMapping("/removeCart")
+	@RequestMapping("/deleteCart")
 	public void deleteCart(@RequestHeader("auth-token") String token, HttpServletResponse response) {
 		Long cartId = getCartFromToken(token).getId();
 		if (cartId == null) {
 			logger.error("non specifico il carrello");
 		} else {
 			cartServ.deleteCart(cartId);
+			cartArtServ.deleteByCartId(cartId);
 		}
 	}
 
 	// metodi privati
 
 	private CartDTO getCartFromToken(String token) {
-		UserDTO userDTO = jwtServ.getUserByToken(token);
+		UserDTO userDTO = jwtServ.getUserDTOByToken(token);
 		Long userId = userDTO.getId();
-
 		CartDTO userCartDto = null;
 		userCartDto = cartServ.getUserCart(userId);
 		return userCartDto;

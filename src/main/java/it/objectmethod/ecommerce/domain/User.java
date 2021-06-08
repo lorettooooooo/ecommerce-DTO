@@ -27,7 +27,7 @@ public class User {
 	@Column(name = "password")
 	private String password;
 
-	@OneToMany(fetch = FetchType.EAGER)
+	@OneToMany(fetch = FetchType.LAZY)
 	@JoinColumn(name = "id_utente")
 	private List<Cart> cart;
 

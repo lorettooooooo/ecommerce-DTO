@@ -2,10 +2,13 @@ package it.objectmethod.ecommerce.service;
 
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 
 import it.objectmethod.ecommerce.domain.User;
 import it.objectmethod.ecommerce.mapper.UserMapper;
@@ -22,33 +25,69 @@ public class UserService {
 	@Autowired
 	UserMapper userMapper;
 
-	public UserDTO loginCheck(LoginDTO user, HttpServletResponse response) {
+	public UserDTO loginCheck(LoginDTO loginUser) {
 
 		UserDTO userDTO = null;
-		if (user == null) {
-			badRequest(response);
-		} else {
-			String username = user.getUsername();
-			String password = user.getPassword();
-			Optional<User> userOpt = userRepo.findByUsernameAndPassword(username, password);
-			if (userOpt.isEmpty()) {
-				noContent(response);
-			} else {
-				userDTO = userMapper.toDto(userOpt.get());
-
-			}
-
+		String username = loginUser.getUsername();
+		String password = loginUser.getPassword();
+		Optional<User> userOpt = userRepo.findByUsernameAndPassword(username, password);
+		if (userOpt.isPresent()) {
+			userDTO = userMapper.toDto(userOpt.get());
 		}
-
 		return userDTO;
 	}
 
-	private void badRequest(HttpServletResponse response) {
-		response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+	public Long getUserIdFromToken(String token) {
+		Algorithm alg = Algorithm.HMAC256("Famme-vede-er-carrello");
+		Long userId = null;
+		try {
+			JWTVerifier ver = JWT.require(alg).build();
+			DecodedJWT decoded = ver.verify(token);
+			userId = decoded.getClaim("user_id").asLong();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return userId;
 	}
 
-	private void noContent(HttpServletResponse response) {
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+	public boolean checkUsername(String username) {
+		boolean doesAlreadyExist = false;
+		Optional<User> userOpt = userRepo.findByUsername(username);
+		if (userOpt.isPresent()) {
+			doesAlreadyExist = true;
+		}
+		return doesAlreadyExist;
+	}
+
+	public UserDTO setUsername(Long userId, String newUsername) {
+		Optional<User> userOpt = userRepo.findById(userId);
+		User user = userOpt.get();
+		user.setUsername(newUsername);
+		userRepo.save(user);
+		UserDTO userDTO = userMapper.toDto(user);
+		return userDTO;
+	}
+
+	public void setPassword(String username, String password) {
+		Optional<User> userOpt = userRepo.findByUsername(username);
+		User user = userOpt.get();
+		user.setPassword(password);
+		userRepo.save(user);
+	}
+
+	public UserDTO setNewUser(LoginDTO loginDto) {
+		User user = new User();
+		user.setPassword(loginDto.getPassword());
+		user.setUsername(loginDto.getUsername());
+		userRepo.save(user);
+		UserDTO userDto = userMapper.toDto(user);
+		return userDto;
+	}
+
+	public void deleteUser(UserDTO userDto) {
+		Optional<User> userOpt = userRepo.findById(userDto.getId());
+		userRepo.delete(userOpt.get());
 	}
 
 }

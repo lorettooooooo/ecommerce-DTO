@@ -12,6 +12,7 @@ public interface OrderDetailMapper extends EntityMapper<OrderDetailDTO, OrderDet
 	@Override
 	@Mapping(source = "article.id", target = "articleId")
 	@Mapping(source = "article.name", target = "articleName")
+	@Mapping(source = "article.price", target = "articlePrice")
 	OrderDetailDTO toDto(OrderDetail entity);
 
 	@Override

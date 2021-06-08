@@ -11,4 +11,8 @@ import it.objectmethod.ecommerce.domain.User;
 public interface UserRepository extends JpaRepository<User, Long> {
 
 	public Optional<User> findByUsernameAndPassword(String username, String password);
+
+	public Optional<User> findByUsername(String username);
+
+	public User findFirstByOrderByIdDesc();
 }

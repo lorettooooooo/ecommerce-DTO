@@ -10,12 +10,9 @@ import it.objectmethod.ecommerce.service.dto.OrderDTO;
 public interface OrderMapper extends EntityMapper<OrderDTO, Order> {
 
 	@Override
-	@Mapping(source = "user.id", target = "userId")
 	OrderDTO toDto(Order entity);
 
 	@Override
-	@Mapping(target = "user", ignore = true)
-	// @Mapping(target = "articles", ignore = true)
 	@Mapping(target = "orderDetails", ignore = true)
 	Order toEntity(OrderDTO dto);
 }

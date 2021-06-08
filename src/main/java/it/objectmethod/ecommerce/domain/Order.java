@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,9 +26,8 @@ public class Order {
 	@Column(name = "data_ordine")
 	private String date;
 
-	@ManyToOne
-	@JoinColumn(name = "id_utente")
-	private User user;
+	@Column(name = "id_utente")
+	private Long userId;
 
 	@OneToMany
 	@JoinColumn(name = "id_ordine")
@@ -59,12 +57,12 @@ public class Order {
 		this.date = date;
 	}
 
-	public User getUser() {
-		return user;
+	public Long getUserId() {
+		return userId;
 	}
 
-	public void setUser(User user) {
-		this.user = user;
+	public void setUserId(Long userId) {
+		this.userId = userId;
 	}
 
 	public List<OrderDetail> getOrderDetails() {

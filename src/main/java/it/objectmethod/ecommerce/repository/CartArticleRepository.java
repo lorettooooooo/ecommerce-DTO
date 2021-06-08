@@ -12,4 +12,6 @@ public interface CartArticleRepository extends JpaRepository<CartArticle, Long> 
 
 	public Optional<CartArticle> findByCartIdAndArticleId(Long cartId, Long articleId);
 
+	public void deleteByCartId(Long cartId);
+
 }

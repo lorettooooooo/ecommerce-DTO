@@ -37,7 +37,7 @@ public class AuthenticationFilter implements Filter {
 		String url = httpReq.getRequestURI();
 		logger.info("STO CONTROLLANDO " + url);
 
-		if (url.endsWith("login")) {
+		if (url.endsWith("login") || url.endsWith("Login")) {
 			logger.info("RICHIESTA APPROVATA");
 			chain.doFilter(request, response);
 		} else {

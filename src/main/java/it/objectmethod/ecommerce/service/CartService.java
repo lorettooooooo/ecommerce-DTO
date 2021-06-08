@@ -1,5 +1,6 @@
 package it.objectmethod.ecommerce.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -46,30 +47,40 @@ public class CartService {
 	CartArticleMapper cartArticleMapper;
 
 	public CartDTO getUserCart(Long userId) {
+		Optional<List<Cart>> userCartListOpt = null;
 
 		CartDTO cartDto = null;
 		Cart userCart = null;
-		Optional<Cart> userCartOpt = cartRepo.findByUserId(userId);
-
-		if (userCartOpt.isEmpty()) {
-			logger.info("creo nuovo carrello per userID " + userId);
-			userCart = new Cart();
-			Optional<User> userOpt = userRepo.findById(userId);
-
-			userCart.setUser(userOpt.get());
-		} else {
-			userCart = userCartOpt.get();
+		while (userCart == null) {
+			userCartListOpt = cartRepo.findByUserId(userId);
+			List<Cart> userCartList = userCartListOpt.get();
+			if (userCartList.size() == 0) {
+				logger.info("creo nuovo carrello per userID " + userId);
+				userCart = new Cart();
+				Optional<User> userOpt = userRepo.findById(userId);
+				userCart.setUser(userOpt.get());
+				cartRepo.save(userCart);
+				userCartListOpt = cartRepo.findByUserId(userId);
+			} else {
+				while (userCartList.size() > 1) {
+					Cart cart = userCartList.get(0);
+					cartRepo.delete(cart);
+					cartRepo.flush();
+					userCartListOpt = cartRepo.findByUserId(userId);
+					userCartList = userCartListOpt.get();
+				}
+				userCart = userCartList.get(0);
+			}
+			cartDto = cartMapper.toDto(userCart);
 		}
-		cartDto = cartMapper.toDto(userCart);
 
 		return cartDto;
 	}
 
 	public CartArticleDTO addArticle(Long cartId, Long articleId) {
 		CartArticleDTO cartArticleDTO = null;
-
 		Optional<CartArticle> cartArticleOpt = cartArticleRepo.findByCartIdAndArticleId(cartId, articleId);
-		if (cartArticleOpt.isEmpty()) { // creo carrello
+		if (cartArticleOpt.isEmpty()) { // creo articolo-carrello
 			CartArticle cartArticle = new CartArticle();
 			Cart cart = cartRepo.findById(cartId).get();
 			cartArticle.setCart(cart);
@@ -78,7 +89,7 @@ public class CartService {
 			cartArticle.setQuantity(1);
 			cartArticleRepo.save(cartArticle);
 			cartArticleDTO = cartArticleMapper.toDto(cartArticle);
-		} else { // il carrello esiste e va updatato
+		} else { // l'articolo-carrello esiste e va updatato
 			CartArticle cartArticle = cartArticleOpt.get();
 			Integer oldQuantity = cartArticle.getQuantity();
 			cartArticle.setQuantity(oldQuantity + 1);
@@ -95,28 +106,29 @@ public class CartService {
 
 		Optional<CartArticle> cartArticleOpt = cartArticleRepo.findByCartIdAndArticleId(cartId, articleId);
 		if (cartArticleOpt.isPresent()) {
-			logger.info("il carrello esiste");
+			logger.info("l'articolo-carrello esiste");
 
 			CartArticle cartArticle = cartArticleOpt.get();
 			Integer oldQuantity = cartArticle.getQuantity();
 			Integer newQuantity = null;
-			if (oldQuantity > 1) { // se è maggiore di 1 rimarrà almeno 1, quindi il carrello continua a esistere
+			if (oldQuantity > 1) { // se è maggiore di 1 rimarrà almeno 1, quindi l'articolo-carrello continua a
+									// esistere
 				newQuantity = oldQuantity - 1;
 				cartArticle.setQuantity(newQuantity);
 				cartArticleRepo.save(cartArticle);
 				cartArticleDTO = cartArticleMapper.toDto(cartArticle);
-			} else { // il carrello viene cancellato quando la quantità dovrebbe scendere sotto 1
-				logger.info("il carrello esiste e va eliminato perché ho 1 oggetto, l'ID è " + cartArticle.getId());
-				cartArticleRepo.delete(cartArticle); // AAAA non funziona
+			} else { // l'articolo-carrello viene cancellato quando la quantità dovrebbe scendere
+						// sotto 1
+				logger.info("l'articolo-carrello esiste e va eliminato perché ho 1 solo oggetto, l'ID è "
+						+ cartArticle.getId());
+				cartArticleRepo.deleteById(cartArticle.getId());
 				cartArticleRepo.flush();
 			}
 		}
 		return cartArticleDTO;
 	}
 
-	// metodi che non funzionano
-
-	public void deleteArticleList(Long cartId, Long articleId) {
+	public void deleteCartArticleList(Long cartId, Long articleId) {
 		Optional<CartArticle> cartArticleOpt = cartArticleRepo.findByCartIdAndArticleId(cartId, articleId);
 		if (cartArticleOpt.isPresent()) {
 			CartArticle cartArticle = cartArticleOpt.get();
@@ -125,7 +137,9 @@ public class CartService {
 		}
 	}
 
+	@Transactional
 	public void deleteCart(Long cartId) {
+		cartArticleRepo.deleteByCartId(cartId);
 		cartRepo.deleteById(cartId);
 		cartRepo.flush();
 	}

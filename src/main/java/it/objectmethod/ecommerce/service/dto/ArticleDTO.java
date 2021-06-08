@@ -6,6 +6,7 @@ public class ArticleDTO {
 	private String code;
 	private String name;
 	private Integer price;
+	private String image;
 
 	public void setId(Long id) {
 		this.id = id;
@@ -45,5 +46,13 @@ public class ArticleDTO {
 
 	public Integer getPrice() {
 		return price;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 }

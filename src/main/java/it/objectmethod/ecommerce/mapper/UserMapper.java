@@ -9,6 +9,7 @@ import it.objectmethod.ecommerce.service.dto.UserDTO;
 @Mapper(componentModel = "spring")
 public interface UserMapper extends EntityMapper<UserDTO, User> {
 	@Override
+	@Mapping(target = "token", ignore = true)
 	UserDTO toDto(User entity);
 
 	@Override

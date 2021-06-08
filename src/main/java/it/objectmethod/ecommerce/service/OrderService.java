@@ -58,7 +58,7 @@ public class OrderService {
 			orderDetailList.add(orderDetail);
 		}
 		// setto tutte le variabili necessarie nell'entità "order"
-		order.setUser(user);
+		order.setUserId(user.getId());
 		LocalDate localDate = LocalDate.now();
 		String stringDate = localDate.toString();
 		order.setDate(stringDate);
@@ -71,5 +71,43 @@ public class OrderService {
 		orderRepo.save(order);
 		OrderDTO orderDto = orderMapper.toDto(order);
 		return orderDto;
+	}
+
+	public List<OrderDTO> getOrdersByUserId(Long userId) {
+		List<Order> orderList = orderRepo.findByUserId(userId);
+		List<OrderDTO> orderListDTO = orderMapper.toDto(orderList);
+		return orderListDTO;
+	}
+
+//	public OrderDTO getOrderById(Long orderId) {
+//		OrderDTO orderDTO = null;
+//		
+//		return orderDTO;
+//	}
+
+	public List<OrderDTO> getLastMonthOrders() {
+
+		String today = LocalDate.now().toString();
+		String thisMonthDate = today.substring(0, 7);
+		Integer thisMonthInt = Integer.parseInt(thisMonthDate.substring(5));
+		String lastMonth = "";
+		String lastMonthDate = "";
+		if (thisMonthInt == 01) {
+			Integer lastYearInt = Integer.parseInt(thisMonthDate.substring(0, 4)) - 1;
+			String lastYear = lastYearInt.toString();
+			lastMonth = "12";
+			lastMonthDate = lastYear + "-" + lastMonth;
+		} else {
+			Integer lastMonthInt = thisMonthInt - 1;
+			if (lastMonthInt < 10) {
+				lastMonth = "0";
+			}
+			lastMonth = lastMonth + lastMonthInt.toString();
+			lastMonthDate = thisMonthDate.substring(0, 4) + "-" + lastMonth;
+		}
+		List<Order> orderList = orderRepo.findByDateStartsWith(lastMonthDate);
+		System.out.println(lastMonthDate);
+		List<OrderDTO> orderListDTO = orderMapper.toDto(orderList);
+		return orderListDTO;
 	}
 }

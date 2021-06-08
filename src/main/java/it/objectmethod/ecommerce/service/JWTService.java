@@ -2,6 +2,7 @@ package it.objectmethod.ecommerce.service;
 
 import java.util.Calendar;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.JWT;
@@ -10,14 +11,20 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 
 import it.objectmethod.ecommerce.domain.User;
+import it.objectmethod.ecommerce.mapper.UserMapper;
 import it.objectmethod.ecommerce.service.dto.UserDTO;
 
 @Service
 public class JWTService {
 
+	@Autowired
+	UserMapper userMapper;
+
 	private static final String MY_SECRET_JWT_KEY = "Famme-vede-er-carrello";
 
-	public String createJWTToken(User user) {
+	public String createJWTToken(UserDTO userDTO) {
+
+		User user = userMapper.toEntity(userDTO);
 
 		Calendar cal = Calendar.getInstance();
 
@@ -54,7 +61,7 @@ public class JWTService {
 		return valid;
 	}
 
-	public UserDTO getUserByToken(String jwtToken) {
+	public UserDTO getUserDTOByToken(String jwtToken) {
 		UserDTO userDTO = new UserDTO();
 		Algorithm alg = Algorithm.HMAC256(MY_SECRET_JWT_KEY);
 		try {

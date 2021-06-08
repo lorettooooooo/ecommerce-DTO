@@ -6,6 +6,7 @@ public class OrderDetailDTO {
 	private Long articleId;
 	private String articleName;
 	private Integer quantity;
+	private Integer articlePrice;
 
 	public Long getId() {
 		return id;
@@ -37,5 +38,13 @@ public class OrderDetailDTO {
 
 	public void setQuantity(Integer quantity) {
 		this.quantity = quantity;
+	}
+
+	public Integer getArticlePrice() {
+		return articlePrice;
+	}
+
+	public void setArticlePrice(Integer articlePrice) {
+		this.articlePrice = articlePrice;
 	}
 }
